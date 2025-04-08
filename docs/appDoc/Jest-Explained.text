@@ -1,0 +1,158 @@
+What is Jest?
+Jest is a JavaScript testing framework used to test applications, mainly in Node.js and React. It is developed by Facebook and is known for being fast, easy to use, and reliable.
+
+Think of Jest as a tool that helps you automate testing so you can check if your code works correctly without running it manually.
+
+Key Features of Jest
+✔ Zero Config – Works out of the box with minimal setup.
+✔ Fast & Parallel Testing – Runs multiple tests simultaneously.
+✔ Built-in Assertions – No need for extra libraries.
+✔ Mocks & Spies – Simulates API calls or functions.
+✔ Code Coverage – Shows how much of your code is tested.
+
+How to Install Jest
+To use Jest in your Node.js project, install it with:
+
+sh
+Copy
+Edit
+npm install --save-dev jest
+Then, in package.json, add:
+
+json
+Copy
+Edit
+"scripts": {
+  "test": "jest"
+}
+Now, you can run tests using:
+
+sh
+Copy
+Edit
+npm test
+
+Example: Writing a Jest Test
+Here’s a simple example of testing a function with Jest:
+
+1️⃣ Create a function (math.js)
+js
+Copy
+Edit
+function add(a, b) {
+    return a + b;
+}
+
+module.exports = add;
+2️⃣ Write a test file (math.test.js)
+js
+Copy
+Edit
+const add = require('./math');
+
+test('adds 2 + 3 to equal 5', () => {
+    expect(add(2, 3)).toBe(5);
+});
+3️⃣ Run Jest
+sh
+Copy
+Edit
+npm test
+✔ If the test passes, Jest shows ✅ success.
+❌ If it fails, Jest tells you what went wrong.
+
+
+
+This code is a Jest-based test suite that uses supertest to test the API endpoints of a Node.js Express server.
+
+Breakdown of Code
+Imports Required Modules
+
+js
+Copy
+Edit
+const request = require('supertest');
+const app = require('./server'); // Adjust path if needed
+supertest: A library that allows testing HTTP endpoints without actually running the server.
+
+app: Imports the Express app (server.js). Ensure the app is exported in server.js:
+
+js
+Copy
+Edit
+module.exports = app;
+Define Test Suite
+
+js
+Copy
+Edit
+describe('API Endpoints', () => { ... });
+describe(...) groups related tests under "API Endpoints."
+
+Test /health Endpoint
+
+js
+Copy
+Edit
+test('GET /health should return 200', async () => {
+    const response = await request(app).get('/health');
+    expect(response.status).toBe(200);
+    expect(response.body.status).toBe('healthy');
+});
+Sends a GET request to /health.
+
+Assertions:
+
+Status code should be 200.
+
+Response body should contain { status: 'healthy' }.
+
+Test /crash Endpoint
+
+js
+Copy
+Edit
+test('GET /crash should return 500', async () => {
+    const response = await request(app).get('/crash');
+    expect(response.status).toBe(500);
+});
+Sends a GET request to /crash, which is expected to crash the app.
+
+Assertion:
+
+Status code should be 500 (since the error handler catches the crash).
+
+Flaky Test
+
+js
+Copy
+Edit
+test('Flaky test that sometimes fails', () => {
+    const random = Math.random();
+    console.log(`Random value: ${random}`);
+    expect(random).toBeGreaterThan(0.3); // Fails if random <= 0.3
+});
+Generates a random number (Math.random() → 0 to 1).
+
+Assertion:
+
+Passes if random > 0.3.
+
+Fails ~30% of the time when random ≤ 0.3, making it flaky (unreliable).
+
+Key Takeaways
+✅ Uses Jest for unit testing.
+✅ Uses supertest for HTTP request simulation.
+✅ Tests that /health is working.
+✅ Tests /crash behavior.
+⚠️ Contains a flaky test, which may cause unpredictable failures.
+
+Would you like to remove the flaky test or improve test reliability? 🚀
+
+
+
+
+
+
+
+
