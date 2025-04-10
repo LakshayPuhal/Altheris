@@ -51,3 +51,12 @@ jobs:
         run: |
           docker tag altheris:latest ${{ secrets.DOCKER_USERNAME }}/altheris:latest
           docker push ${{ secrets.DOCKER_USERNAME }}/altheris:latest
+
+
+
+
+
+          docker login -u lakshayp
+
+
+          dckr_pat_Ny3iPKKOO5eNSSln4Ikri8o-c14
