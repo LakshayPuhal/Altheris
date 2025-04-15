@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-const port = 3000;
 
 // Health endpoint (returns success)
 app.get('/health', (req, res) => {
@@ -9,7 +8,6 @@ app.get('/health', (req, res) => {
 
 // Crash endpoint (simulates failure)
 app.get('/crash', (req, res) => {
-    // Simulate a crash by throwing an error
     throw new Error('Intentional crash!');
 });
 
@@ -24,6 +22,4 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Something went wrong!' });
 });
 
-app.listen(port, () => {
-    console.log(`App running on http://localhost:${port}`);
-});
+module.exports = app;
