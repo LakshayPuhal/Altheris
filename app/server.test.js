@@ -1,24 +1,22 @@
-const request = require("supertest"); // Corrected require statement
-const app = require("./main"); // Importing the main app
+const request = require('supertest');
+const app = require('./server');
 
-describe("API Endpoints", () => {
-  // Test for /health endpoint
-  test("GET /health should return 200", async () => {
-    const response = await request(app).get("/health"); // Fixed incorrect path
+describe('API Endpoints', () => {
+  test('GET /health should return 200', async () => {
+    const response = await request(app).get('/health');
     expect(response.status).toBe(200);
-    expect(response.body.status).toBe("healthy");
+    expect(response.body.status).toBe('healthy');
   });
 
-  // Test for /crash endpoint
-  test("GET /crash should return 500", async () => {
-    const response = await request(app).get("/crash");
+  test('GET /crash should return 500', async () => {
+    const response = await request(app).get('/crash');
     expect(response.status).toBe(500);
+    expect(response.body.error).toBe('Something went wrong!');
   });
 
-  // Flaky test that sometimes fails randomly
-  test("Flaky test that sometimes fails", () => {
-    const random = Math.random(); // Generates a random number between 0 and 1
-    console.log(`Random value: ${random}`); // Logs the random number
-    expect(random).toBeGreaterThan(0.3); // Test passes if random > 0.3, otherwise fails
+  test('Flaky test that sometimes fails', () => {
+    const random = Math.random();
+    console.log(`Random value: ${random}`);
+    expect(random).toBeGreaterThan(0.3); // Fails ~30% of the time
   });
 });

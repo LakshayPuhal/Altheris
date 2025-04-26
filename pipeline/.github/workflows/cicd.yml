@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main  # Runs on push to 'main'
+      - main
 
 jobs:
   build-and-test:
@@ -16,12 +16,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18  # Matches your setup
+          node-version: 18
 
       - name: Install Dependencies
+        working-directory: ./app
         run: npm install
 
       - name: Run Jest Tests with Flaky Detection
+        working-directory: ./app
         run: |
           echo "Running tests 5 times to detect flakiness..."
           failures=0
@@ -32,31 +34,25 @@ jobs:
           echo "Total failures: $failures"
           if [ $failures -gt 1 ]; then
             echo "Too many flaky test failures!"
-            exit 1  # Fails the pipeline if flakiness exceeds threshold
+            exit 1
           fi
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
       - name: Build Docker Image
-        run: docker build -t altheris:latest .  # Lowercase for consistency (Docker convention)
+        working-directory: ./app
+        run: docker build -t app:latest .
 
       - name: Run Containerized Tests
-        run: docker run altheris:latest npm test || echo "Containerized tests failed, proceeding anyway"
+        run: docker run app:latest npm test || echo "Containerized tests failed, proceeding anyway"
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      - name: Tag and Push Docker Image
+      - name: Tag and Push Docker Images
         run: |
-          docker tag altheris:latest ${{ secrets.DOCKER_USERNAME }}/altheris:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/altheris:latest
-
-
-
-
-
-          docker login -u lakshayp
-
-
-          dckr_pat_Ny3iPKKOO5eNSSln4Ikri8o-c14
+          docker tag app:latest ${{ secrets.DOCKER_USERNAME }}/app:latest
+          docker tag app:latest ${{ secrets.DOCKER_USERNAME }}/app:stable
+          docker push ${{ secrets.DOCKER_USERNAME }}/app:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/app:stable
