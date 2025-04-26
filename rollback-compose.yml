@@ -1,6 +1,6 @@
 version: '3'
 services:
-  web:
-    image: lakshaypuhal/altheris:stable
+  app:
+    image: lakshaypuhal/app:stable
     ports:
       - "3000:3000"

@@ -3,7 +3,7 @@ const app = express();
 
 // Health endpoint (returns success)
 app.get('/health', (req, res) => {
-    res.status(200).json({ status: 'healthy' });
+    res.status(500).json({ status: 'unhealthy' });
 });
 
 // Crash endpoint (simulates failure)
