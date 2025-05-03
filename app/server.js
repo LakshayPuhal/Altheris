@@ -1,6 +1,18 @@
 const express = require('express');
 const client = require('prom-client');
+const winston = require('winston');
 const app = express();
+
+const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json()
+    ),
+    transports: [
+        new winston.transports.File({ filename: 'app.log' })
+    ]
+});
 
 const httpRequestCounter = new client.Counter({
     name: 'http_requests_total',
@@ -9,21 +21,24 @@ const httpRequestCounter = new client.Counter({
 });
 
 app.use((req, res, next) => {
+    const start = Date.now();
     const end = res.end;
     res.end = function () {
+        const duration = Date.now() - start;
         httpRequestCounter.inc({ method: req.method, path: req.url, status: res.statusCode });
+        logger.info(`${req.method} ${req.url}`, { status: res.statusCode, duration });
         end.apply(res, arguments);
     };
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
     next();
 });
 
 app.get('/health', (req, res) => {
-    res.json({ status: 'healthy' }); // Ensure this returns 200
+    res.status(500).json({ status: 'unhealthy' });
 });
 
 app.get('/crash', (req, res) => {
     res.status(500).json({ error: 'Something went wrong!' });
+    logger.error('Crash endpoint triggered');
 });
 
 app.get('/metrics', async (req, res) => {
@@ -32,5 +47,5 @@ app.get('/metrics', async (req, res) => {
 });
 
 app.listen(3000, () => {
-    console.log('Server running on port 3000');
+    logger.info('Server running on port 3000');
 });
