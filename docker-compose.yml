@@ -9,3 +9,33 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+    restart: unless-stopped
+  monitor:
+    image: curlimages/curl
+    command: >
+      /bin/sh -c "while true; do
+        if ! curl -f http://app:3000/health; then
+          echo 'Health check failed, rolling back...';
+          docker compose -f /rollback-compose.yml up -d --force-recreate;
+        else
+          echo 'Health check passed';
+        fi;
+        sleep 10;
+      done"
+    depends_on:
+      - app
+    volumes:
+      - ./rollback-compose.yml:/rollback-compose.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
