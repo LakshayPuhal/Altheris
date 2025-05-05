@@ -33,8 +33,9 @@ app.use((req, res, next) => {
 });
 
 app.get('/health', (req, res) => {
-    res.status(500).json({ status: 'unhealthy' });
-});
+    res.status(500).send('unhealthy');
+  });
+  
 
 app.get('/crash', (req, res) => {
     res.status(500).json({ error: 'Something went wrong!' });

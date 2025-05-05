@@ -1,7 +1,0 @@
-services:
-  web:
-    build:
-      context: ../app  # ✅ Correct — goes up to AItheris/, then into app/
-      dockerfile: Dockerfile
-    ports:
-      - "5001:3000"
